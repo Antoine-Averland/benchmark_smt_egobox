@@ -7,16 +7,15 @@ from smt.sampling_methods import LHS
 import egobox as egx
 import numpy as np
 import timeit
+import csv
 
-#10/50/200/800/1500
+matrix5 = np.full((5, 2), [0, 1])
+matrix20 = np.full((20, 2), [0, 1])
+matrix50 = np.full((50, 2), [0, 1])
+matrix100 = np.full((100, 2), [0, 1])
+matrix500 = np.full((500, 2), [0, 1])
 
-matrice5 = np.full((5, 2), [0, 1])
-matrice20 = np.full((20, 2), [0, 1])
-matrice50 = np.full((50, 2), [0, 1])
-matrice100 = np.full((100, 2), [0, 1])
-matrice500 = np.full((500, 2), [0, 1])
-
-list_xlimits = [matrice5, matrice20, matrice50, matrice100, matrice500]
+list_xlimits = [matrix5, matrix20, matrix50, matrix100, matrix500]
 #list_num_points = [10, 50, 200, 800, 1500]
 list_num_points = [10, 13, 15]
 list_smt = []
@@ -60,3 +59,24 @@ for i, xlimits in enumerate(list_xlimits, start=0):
         print(f"Average time for xlimits {i} with {num_points} points for EGObox: {average_time_egob} seconds")
         print()
 
+csv_filename = "results_benchmark.csv"
+
+with open(csv_filename, mode='w', newline='') as file:
+    writer = csv.writer(file)
+    headers = ['Program', 'Matrix', 'Num_Points', 'Average_Time_(seconds)']
+    writer.writerow(headers)
+
+    for i, (xlimits, num_points) in enumerate(zip(list_xlimits, list_num_points), start=0):
+        for j, num_points in enumerate(list_num_points):
+            idx = i * len(list_num_points) + j
+            average_time_smt = list_time_smt[idx]
+            row = ['SMT', f'Matrix{i}', num_points, average_time_smt]
+            writer.writerow(row)
+
+    # Écrire les résultats pour EGObox
+    for i, xlimits in enumerate(list_xlimits, start=0):
+        for j, num_points in enumerate(list_num_points):
+            idx = i * len(list_num_points) + j
+            average_time_egob = list_time_egobox[idx]
+            row = ['EGObox', f'Matrix{i}', num_points, average_time_egob]
+            writer.writerow(row)

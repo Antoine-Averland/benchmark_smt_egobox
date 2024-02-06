@@ -8,6 +8,10 @@ import egobox as egx
 import numpy as np
 import timeit
 
+matrice5 = np.full((5, 2), [0, 1])
+matrice20 = np.full((20, 2), [0, 1])
+matrice50 = np.full((50, 2), [0, 1])
+matrice100 = np.full((100, 2), [0, 1])
 
 
 def smt_lhs():

@@ -49,7 +49,7 @@ for xlimits in list_xlimits:
         average_time_egob = result_egob / 5
         list_time_egobox.append(average_time_egob)
 
-# Affichage des résultats
+# print of the results
 for i, xlimits in enumerate(list_xlimits, start=0):
     for j, num_points in enumerate(list_num_points):
         idx = i * len(list_num_points) + j
@@ -59,7 +59,7 @@ for i, xlimits in enumerate(list_xlimits, start=0):
         print(f"Average time for xlimits {i} with {num_points} points for EGObox: {average_time_egob} seconds")
         print()
 
-#écriture dans le csv
+# writing in csv file
 csv_filename = "results_benchmark.csv"
 
 with open(csv_filename, mode='w', newline='') as file:
@@ -74,7 +74,6 @@ with open(csv_filename, mode='w', newline='') as file:
             row = ['SMT', f'Matrix{i}', num_points, '{:3f}'.format(average_time_smt)]
             writer.writerow(row)
 
-    # Écrire les résultats pour EGObox
     for i, xlimits in enumerate(list_xlimits, start=0):
         for j, num_points in enumerate(list_num_points):
             idx = i * len(list_num_points) + j

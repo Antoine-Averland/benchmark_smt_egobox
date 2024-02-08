@@ -9,7 +9,7 @@ import numpy as np
 import timeit
 import csv
 
-DIMS = []
+dimensions = [(5, 2), (20, 2), (50, 2), (100, 2), (500, 2)]
 
 matrix5 = np.full((5, 2), [0, 1])
 matrix20 = np.full((20, 2), [0, 1])
@@ -18,8 +18,8 @@ matrix100 = np.full((100, 2), [0, 1])
 matrix500 = np.full((500, 2), [0, 1])
 
 list_xlimits = [matrix5, matrix20, matrix50, matrix100, matrix500]
-# list_num_points = [10, 50, 100, 250, 500, 1000]
-list_num_points = [10, 13, 15]
+list_num_points = [10, 50, 100, 250, 500, 1000]
+# list_num_points = [10, 13, 15]
 
 list_smt = []
 list_egobox = []

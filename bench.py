@@ -11,18 +11,12 @@ import csv
 
 dimensions = [(5, 2), (20, 2), (50, 2), (100, 2), (500, 2)]
 
-matrix5 = np.full((5, 2), [0, 1])
-matrix20 = np.full((20, 2), [0, 1])
-matrix50 = np.full((50, 2), [0, 1])
-matrix100 = np.full((100, 2), [0, 1])
-matrix500 = np.full((500, 2), [0, 1])
+list_xlimits = [np.full(dim, [0, 1]) for dim in dimensions]
 
-list_xlimits = [matrix5, matrix20, matrix50, matrix100, matrix500]
 list_num_points = [10, 50, 100, 250, 500, 1000]
 # list_num_points = [10, 13, 15]
 
-list_smt = []
-list_egobox = []
+
 list_time_smt = []
 list_time_egobox = []
 
@@ -90,7 +84,7 @@ if __name__ == "__main__":
                 average_time_smt = list_time_smt[idx]
                 row = [
                     "SMT",
-                    f"Matrix{i}",
+                    f"{xlimits.shape}",
                     num_points,
                     "{:3f}".format(average_time_smt),
                 ]
@@ -102,7 +96,7 @@ if __name__ == "__main__":
                 average_time_egob = list_time_egobox[idx]
                 row = [
                     "EGObox",
-                    f"Matrix{i}",
+                    f"{xlimits.shape}",
                     num_points,
                     "{:.3f}".format(average_time_egob),
                 ]

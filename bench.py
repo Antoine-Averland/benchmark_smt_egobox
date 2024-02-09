@@ -4,8 +4,9 @@ import numpy as np
 import timeit
 import csv
 
-DIMENSIONS = [5, 10, 20]  # , 100]
-NB_POINTS = [10, 13, 15]
+DIMENSIONS = [5, 10, 20, 100, 500]
+# NB_POINTS = [10, 13, 15]
+NB_POINTS = [10, 50, 100, 250, 500, 1000]
 NB_ITER = 5
 LIBRARIES = ["SMT", "EGOBOX"]
 
@@ -57,4 +58,4 @@ def write_to_csv(csv_filename, result):
 
 
 if __name__ == "__main__":
-    write_to_csv("results_benchmark2.csv", run_benchmark())
+    write_to_csv("results_benchmark.csv", run_benchmark())

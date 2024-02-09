@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 data = {"SMT": {}, "EGOBOX": {}}
-# NB_POINTS = [10, 50, 100, 250, 500, 1000]
-NB_POINTS = [10, 13, 15]
-CSV_FILENAME = "results_benchmark2.csv"
+NB_POINTS = [10, 50, 100, 250, 500, 1000]
+# NB_POINTS = [10, 13, 15]
+CSV_FILENAME = "results_benchmark.csv"
 
 
 def sort_dimensions():

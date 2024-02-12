@@ -34,9 +34,9 @@ def create_chart(matrix_dimensions, args):
 
         ax.set_xticks(np.arange(len(matrix_dimensions)) + bar_width / 2)
         ax.set_xticklabels(matrix_dimensions)
-        ax.set_xlabel("Dimensions of xlimits")
+        ax.set_xlabel("Dimensions of x")
         ax.set_ylabel("Average Time (seconds)")
-        ax.set_title(f"Comparison for {npoints} Points for {args}")
+        ax.set_title(f"LHS ({args}) - {npoints} points")
         ax.legend()
 
         plt.savefig(f"comparison_{npoints}_points.png")

@@ -17,7 +17,7 @@ def sort_dimensions():
     return sort_matrix_str
 
 
-def create_chart(matrix_dimensions):
+def create_chart(matrix_dimensions, args):
     for npoints in NB_POINTS:
         fig, ax = plt.subplots()
         bar_width = 0.35
@@ -36,7 +36,7 @@ def create_chart(matrix_dimensions):
         ax.set_xticklabels(matrix_dimensions)
         ax.set_xlabel("Dimensions of xlimits")
         ax.set_ylabel("Average Time (seconds)")
-        ax.set_title(f"Comparison for {npoints} Points")
+        ax.set_title(f"Comparison for {npoints} Points for {args}")
         ax.legend()
 
         plt.savefig(f"comparison_{npoints}_points.png")

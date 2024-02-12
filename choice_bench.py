@@ -47,9 +47,6 @@ def main():
         ALGOS = {"SMT": smt_lhs_maximin, "EGOBOX": egobox_lhs_maximin}
     elif args.lhs == "centered_maximin":
         ALGOS = {"SMT": smt_lhs_centered_maximin, "EGOBOX": egobox_lhs_centered_maximin}
-    else:
-        print("Invalid type choice.")
-        return
 
     write_to_csv(CSV_filename, run_benchmark(LIBRARIES, ALGOS))
     read_from_csv(CSV_filename)

@@ -1,32 +1,14 @@
-from smt.sampling_methods import LHS
-import egobox as egx
 import numpy as np
 import timeit
-import time
 import csv
 
-start = time.time()
 DIMENSIONS = [5, 10, 20, 100, 200, 500]
-# NB_POINTS = [10, 13, 15]
-NB_POINTS = [10, 50, 100, 250, 500, 1000]
+NB_POINTS = [10, 13, 15]
+# NB_POINTS = [10, 50, 100, 250, 500, 1000]
 NB_ITER = 5
-LIBRARIES = ["SMT", "EGOBOX"]
 
 
-def smt_lhs(xlimits, num_points):
-    sampling = LHS(xlimits=xlimits, criterion="ese", random_state=42)
-    sampling(num_points)
-
-
-def egobox_lhs(xlimits, num_points):
-    xspecs = egx.to_specs(xlimits)
-    egx.lhs(xspecs, num_points)
-
-
-ALGOS = {"SMT": smt_lhs, "EGOBOX": egobox_lhs}
-
-
-def run_benchmark():
+def run_benchmark(LIBRARIES, ALGOS):
     result = []
     for lib in LIBRARIES:
         for dim in DIMENSIONS:
@@ -57,8 +39,3 @@ def write_to_csv(csv_filename, result):
 
         for line in result:
             writer.writerow(line)
-
-
-if __name__ == "__main__":
-    write_to_csv("results_benchmark.csv", run_benchmark())
-    print(time.time() - start)

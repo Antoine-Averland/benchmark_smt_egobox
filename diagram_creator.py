@@ -1,12 +1,11 @@
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
-import time
 
-start = time.time()
+
 data = {"SMT": {}, "EGOBOX": {}}
-NB_POINTS = [10, 50, 100, 250, 500, 1000]
-# NB_POINTS = [10, 13, 15]
+# NB_POINTS = [10, 50, 100, 250, 500, 1000]
+NB_POINTS = [10, 13, 15]
 
 
 def sort_dimensions():
@@ -44,8 +43,8 @@ def create_chart(matrix_dimensions):
         plt.show()
 
 
-def read_from_csv():
-    with open("results_benchmark.csv", mode="r") as file:
+def read_from_csv(CSV_filename):
+    with open(CSV_filename, mode="r") as file:
         reader = csv.DictReader(file)
         for row in reader:
             program = row["lib"]
@@ -63,4 +62,3 @@ def read_from_csv():
 if __name__ == "__main__":
     read_from_csv()
     create_chart(sort_dimensions())
-    print(time.time() - start)

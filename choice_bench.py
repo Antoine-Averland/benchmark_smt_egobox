@@ -1,4 +1,4 @@
-from lhs_functions import (
+from functions import (
     smt_lhs_opti,
     egobox_lhs_opti,
     smt_lhs_classic,
@@ -19,6 +19,7 @@ start = time.time()
 ALGOS = {}
 LIBRARIES = ["SMT", "EGOBOX"]
 CSV_filename = "results_bench.csv"
+file = False
 
 
 def parse_arguments():
@@ -46,11 +47,16 @@ def main():
     elif args.lhs == "maximin":
         ALGOS = {"SMT": smt_lhs_maximin, "EGOBOX": egobox_lhs_maximin}
     elif args.lhs == "centered_maximin":
-        ALGOS = {"SMT": smt_lhs_centered_maximin, "EGOBOX": egobox_lhs_centered_maximin}
+        ALGOS = {
+            "SMT": smt_lhs_centered_maximin,
+            "EGOBOX": egobox_lhs_centered_maximin,
+        }
+    else:
+        return
 
     write_to_csv(CSV_filename, run_benchmark(LIBRARIES, ALGOS))
     read_from_csv(CSV_filename)
-    create_chart(sort_dimensions(), args)
+    create_chart(sort_dimensions(), file)
     print(f"{time.time() - start} seconds")
 
 

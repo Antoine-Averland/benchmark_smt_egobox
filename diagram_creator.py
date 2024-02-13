@@ -1,6 +1,8 @@
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+import sys
+import os
 
 
 data = {"SMT": {}, "EGOBOX": {}}
@@ -17,7 +19,7 @@ def sort_dimensions():
     return sort_matrix_str
 
 
-def create_chart(matrix_dimensions, args):
+def create_chart(matrix_dimensions, file):
     for npoints in NB_POINTS:
         fig, ax = plt.subplots()
         bar_width = 0.35
@@ -36,7 +38,10 @@ def create_chart(matrix_dimensions, args):
         ax.set_xticklabels(matrix_dimensions)
         ax.set_xlabel("Dimensions of x")
         ax.set_ylabel("Average Time (seconds)")
-        ax.set_title(f"LHS ({args}) - {npoints} points")
+        if file:
+            ax.set_title(f"kriging - {npoints} points")
+        else:
+            ax.set_title(f"LHS - {npoints} points")
         ax.legend()
 
         plt.savefig(f"comparison_{npoints}_points.png")
@@ -57,6 +62,11 @@ def read_from_csv(CSV_filename):
 
             if num_points not in data[program][matrix]:
                 data[program][matrix][num_points] = average_time
+
+
+def is_called_from(file_path):
+    current_file = os.path.abspath(sys.argv[0])
+    return current_file == os.path.abspath(file_path)
 
 
 if __name__ == "__main__":

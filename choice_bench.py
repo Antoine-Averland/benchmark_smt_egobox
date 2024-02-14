@@ -35,7 +35,7 @@ def parse_arguments():
     return parser.parse_args()
 
 
-def main():
+if __name__ == "__main__":
     args = parse_arguments()
 
     if args.lhs == "opti":
@@ -51,14 +51,8 @@ def main():
             "SMT": smt_lhs_centered_maximin,
             "EGOBOX": egobox_lhs_centered_maximin,
         }
-    else:
-        return
 
     write_to_csv(CSV_filename, run_benchmark(LIBRARIES, ALGOS))
     read_from_csv(CSV_filename)
     create_chart(sort_dimensions(), file)
     print(f"{time.time() - start} seconds")
-
-
-if __name__ == "__main__":
-    main()

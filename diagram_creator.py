@@ -1,3 +1,4 @@
+from benchmark import parse_arguments
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
@@ -5,13 +6,14 @@ import sys
 import os
 
 
-data = {"SMT": {}, "EGOBOX": {}}
-# NB_POINTS = [10, 50, 100, 250, 500, 1000]
-NB_POINTS = [10, 13, 15]
+data = {"SMT_2.3.0": {}, "EGOBOX_0.15.1": {}}
+NB_POINTS = [10, 50, 100, 250, 500, 1000]
+# NB_POINTS = [10, 13, 15]
+file = False
 
 
 def sort_dimensions():
-    matrix_dimensions = list(set(data["SMT"].keys()))
+    matrix_dimensions = list(set(data["SMT_2.3.0"].keys()))
     nb_matrix = [int(dim) for dim in matrix_dimensions]
     sort_matrix = sorted(nb_matrix)
     sort_matrix_str = [str(number) for number in sort_matrix]
@@ -19,12 +21,12 @@ def sort_dimensions():
     return sort_matrix_str
 
 
-def create_chart(matrix_dimensions, file):
+def create_chart(matrix_dimensions, file, lhs):
     for npoints in NB_POINTS:
         fig, ax = plt.subplots()
         bar_width = 0.35
 
-        for i, program in enumerate(["SMT", "EGOBOX"]):
+        for i, program in enumerate(["SMT_2.3.0", "EGOBOX_0.15.1"]):
             matrix = [data[program][matrix][npoints] for matrix in matrix_dimensions]
 
             ax.bar(
@@ -41,11 +43,10 @@ def create_chart(matrix_dimensions, file):
         if file:
             ax.set_title(f"kriging - {npoints} points")
         else:
-            ax.set_title(f"LHS - {npoints} points")
+            ax.set_title(f"LHS {lhs} - {npoints} points")
         ax.legend()
 
-        plt.savefig(f"comparison_{npoints}_points.png")
-        plt.show()
+        plt.savefig(f"results/lhs_{lhs}/LHS_{lhs}_{npoints}_points.png")
 
 
 def read_from_csv(CSV_filename):
@@ -70,5 +71,9 @@ def is_called_from(file_path):
 
 
 if __name__ == "__main__":
-    read_from_csv()
-    create_chart(sort_dimensions())
+    args = parse_arguments()
+    csv_filename = f"results_{args.lhs}.csv"
+    print(args.lhs)
+
+    read_from_csv(csv_filename)
+    create_chart(sort_dimensions(), file, args.lhs)

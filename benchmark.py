@@ -29,12 +29,16 @@ def smt_lhs(xlimits, num_points, args):
 
 def egobox_lhs(xlimits, num_points, args):
     xspecs = egx.to_specs(xlimits)
-    egx.sampling(type_ego[args.lhs], xspecs, num_points)
+    if args.lhs == "opti":
+        egx.lhs(xspecs, num_points)
+    else:
+        egx.sampling(type_ego[args.lhs], xspecs, num_points)
 
 
-DIMENSIONS = [5, 10, 20, 100, 200, 500]
-# NB_POINTS = [10, 13, 15]
-NB_POINTS = [10, 50, 100, 250, 500, 1000]
+# DIMENSIONS = [5, 10, 20, 100, 200, 500]
+DIMENSIONS = [5, 10]
+NB_POINTS = [10, 13, 15]
+# NB_POINTS = [10, 50, 100, 250, 500, 1000]
 NB_ITER = 20
 
 
@@ -49,8 +53,8 @@ def parse_arguments():
     )
     parser.add_argument(
         "--lhs",
-        choices=["opti", "classic", "centered", "maximin", "centered_maximin"],
-        default="classic",
+        choices=["opti", "classic", "centered", "maximin", "centered_maximin", "all"],
+        default="all",
         help="Specify the choice of the type of lhs",
     )
     return parser.parse_args()
@@ -63,7 +67,7 @@ def run_benchmark(LIBRARIES, ALGOS):
             xlimits = np.full((dim, 2), [0, 1])
             for num_points in NB_POINTS:
                 print(
-                    f"Running benchmark with {lib} for {xlimits.shape} and {num_points} points"
+                    f"Running benchmark with {lib} {args.lhs} for {xlimits.shape} and {num_points} points"
                 )
                 time = timeit.timeit(
                     lambda: ALGOS[lib](xlimits, num_points, args), number=NB_ITER
@@ -91,8 +95,15 @@ def write_to_csv(csv_filename, result):
 
 if __name__ == "__main__":
     args = parse_arguments()
-    csv_filename = f"results_{args.lhs}.csv"
-    ALGOS = {"SMT_2.3.0": smt_lhs, "EGOBOX_0.15.1": egobox_lhs}
+    if args.lhs == "all":
+        for lhs_type in type_lhs.keys():
+            csv_filename = f"results_{lhs_type}.csv"
+            ALGOS = {"SMT_2.3.0": smt_lhs, "EGOBOX_0.15.1": egobox_lhs}
+            write_to_csv(csv_filename, run_benchmark(LIBRARIES, ALGOS))
 
-    write_to_csv(csv_filename, run_benchmark(LIBRARIES, ALGOS))
+    else:
+        csv_filename = f"results_{args.lhs}.csv"
+        ALGOS = {"SMT_2.3.0": smt_lhs, "EGOBOX_0.15.1": egobox_lhs}
+        write_to_csv(csv_filename, run_benchmark(LIBRARIES, ALGOS))
+
     print(f"{time.time() - start} seconds")

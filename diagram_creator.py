@@ -2,13 +2,11 @@ from benchmark import parse_arguments
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
-import sys
-import os
 
 
 data = {"SMT_2.3.0": {}, "EGOBOX_0.15.1": {}}
-NB_POINTS = [10, 50, 100, 250, 500, 1000]
-# NB_POINTS = [10, 13, 15]
+# NB_POINTS = [10, 50, 100, 250, 500, 1000]
+NB_POINTS = [10, 13, 15]
 file = False
 
 
@@ -63,11 +61,6 @@ def read_from_csv(CSV_filename):
 
             if num_points not in data[program][matrix]:
                 data[program][matrix][num_points] = average_time
-
-
-def is_called_from(file_path):
-    current_file = os.path.abspath(sys.argv[0])
-    return current_file == os.path.abspath(file_path)
 
 
 if __name__ == "__main__":

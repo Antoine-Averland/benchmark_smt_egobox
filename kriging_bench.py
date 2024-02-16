@@ -1,62 +1,55 @@
-from diagram_creator import sort_dimensions, create_chart, read_from_csv
-from smt.surrogate_models import KRG
-import egobox as egx
+from smt.problems import Sphere
 import numpy as np
 import timeit
 import time
 import csv
 
 start = time.time()
-xt = np.array([[0.0, 1.0, 2.0, 3.0, 4.0]]).T
-yt = np.array([[0.0, 1.0, 1.5, 0.9, 1.0]]).T
-DIMENSIONS = [5, 10, 20, 100, 200, 500]
-# NB_POINTS = [10, 13, 15]
-NB_POINTS = [10, 50, 100, 250, 500, 1000]
+# DIMENSIONS = [5, 10, 20, 100, 200, 500]
+DIMENSIONS = [5, 10]
+NB_POINTS = [10, 13, 15]
+# NB_POINTS = [10, 50, 100, 250, 500, 1000]
 NB_ITER = 5
-LIBRARIES = ["SMT", "EGOBOX"]
+LIBRARIES = "SMT_2.3.0"
 CSV_filename = "kriging.csv"
 file = True
 
 
-def kriging_smt(num_points):
-    sm = KRG(theta0=[1e-2])
-    sm.set_training_values(xt, yt)
-    sm.train()
-    x = np.linspace(0.0, 4.0, num_points)
-    y = sm.predict_values(x)
-    s2 = sm.predict_variances(x)
-    return y, s2
+def kriging_smt():
+    for ndim in DIMENSIONS:
+        problem = Sphere(ndim=ndim)
+        for num in NB_POINTS:
+            x = np.ones((num, ndim))
+            x[:, 0] = np.linspace(-10, 10.0, num)
+            x[:, 1] = 0.0
+            y = problem(x)
+
+            yd = np.empty((num, ndim))
+            for i in range(ndim):
+                yd[:, i] = problem(x, kx=i).flatten()
+
+            print(y.shape)
+            print(yd.shape)
 
 
-def kriging_egobox(num_points):
-    gpx = egx.GpMix().fit(xt, yt)
-    x = np.linspace(0.0, 4.0, num_points).reshape((-1, 1))
-    y = gpx.predict_values(x)
-    s2 = gpx.predict_variances(x)
-    return y, s2
+ALGOS = {"SMT": kriging_smt}
 
 
-ALGOS = {"SMT": kriging_smt, "EGOBOX": kriging_egobox}
-
-
-def run_benchmark(LIBRARIES):
+def run_benchmark():
     result = []
-    for lib in LIBRARIES:
-        for dim in DIMENSIONS:
-            xlimits = np.full((dim, 2), [0, 1])
-            for num_points in NB_POINTS:
-                print(
-                    f"Running benchmark with {lib} for {xlimits.shape} and {num_points} points"
-                )
-                time = timeit.timeit(lambda: ALGOS[lib](num_points), number=NB_ITER)
-                res = {
-                    "lib": lib,
-                    "dim": dim,
-                    "nb_points": num_points,
-                    "time": time / NB_ITER,
-                }
-                print(res)
-                result.append(res)
+    for dim in DIMENSIONS:
+        xlimits = np.full((dim, 2), [0, 1])
+        for num_points in NB_POINTS:
+            print(f"Running benchmark for {xlimits.shape} and {num_points} points")
+            time = timeit.timeit(lambda: kriging_smt(), number=NB_ITER)
+            res = {
+                "lib": LIBRARIES,
+                "dim": dim,
+                "nb_points": num_points,
+                "time": time / NB_ITER,
+            }
+            print(res)
+            result.append(res)
     return result
 
 
@@ -71,7 +64,5 @@ def write_to_csv(csv_filename, result):
 
 
 if __name__ == "__main__":
-    write_to_csv(CSV_filename, run_benchmark(LIBRARIES))
-    read_from_csv(CSV_filename)
-    create_chart(sort_dimensions(), file)
+    write_to_csv(CSV_filename, run_benchmark())
     print(f"{time.time() - start} seconds")

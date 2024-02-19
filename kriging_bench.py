@@ -7,12 +7,12 @@ import time
 import csv
 
 start = time.time()
-# DIMENSIONS = [5, 10, 20, 100, 200, 500]
-DIMENSIONS = [5, 10]
-NB_POINTS = [10, 13, 15]
-# NB_POINTS = [10, 50, 100, 250, 500, 1000]
-NB_ITER = 5
-CSV_filename = "kriging.csv"
+DIMENSIONS = [5, 10, 20, 50, 100]
+# DIMENSIONS = [5, 10]
+# NB_POINTS = [10, 13, 15]
+NB_POINTS = [50, 200, 400, 600, 1000]
+NB_ITER = 20
+CSV_FILENAME = "kriging.csv"
 SMT_VERSION = "SMT_2.3.0"
 EGOBOX_VERSION = "EGOBOX_0.15.1"
 LIBRARIES = [SMT_VERSION, EGOBOX_VERSION]
@@ -71,5 +71,5 @@ def write_to_csv(csv_filename, result):
 
 
 if __name__ == "__main__":
-    write_to_csv(CSV_filename, run_benchmark())
+    write_to_csv(CSV_FILENAME, run_benchmark())
     print(f"{time.time() - start} seconds")

@@ -8,7 +8,6 @@ EGOBOX_VERSION = "EGOBOX_0.15.1"
 data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
 # NB_POINTS = [10, 50, 100, 250, 500, 1000]
 NB_POINTS = [10, 13, 15]
-FILE = False
 LHS_OPTION_NAMES = ["optimized", "classic", "centered", "maximin", "centered_maximin"]
 
 
@@ -43,7 +42,9 @@ def create_chart(matrix_dimensions, lhs_option):
         ax.set_title(f"LHS {lhs_option} - {npoints} points")
         ax.legend()
 
-        plt.savefig(f"results/lhs_{lhs_option}/LHS_{lhs_option}_{npoints}_points.png")
+        plt.savefig(
+            f"results/lhs_{lhs_option}/LHS_{lhs_option}_{npoints}_points_{SMT_VERSION}_{EGOBOX_VERSION}.png"
+        )
 
 
 def read_from_csv(CSV_filename):

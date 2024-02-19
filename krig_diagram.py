@@ -2,13 +2,16 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-data = {"SMT_2.3.0": {}}
+SMT_VERSION = "SMT_2.3.0"
+EGOBOX_VERSION = "EGOBOX_0.15.1"
+data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
+CSV_FILENAME = "kriging.csv"
 # NB_POINTS = [10, 50, 100, 250, 500, 1000]
 NB_POINTS = [10, 13, 15]
 
 
 def sort_dimensions():
-    matrix_dimensions = list(set(data["SMT_2.3.0"].keys()))
+    matrix_dimensions = list(set(data[SMT_VERSION].keys()))
     nb_matrix = [int(dim) for dim in matrix_dimensions]
     sort_matrix = sorted(nb_matrix)
     sort_matrix_str = [str(number) for number in sort_matrix]
@@ -33,35 +36,30 @@ def read_from_csv(CSV_filename):
 
 
 def create_chart(matrix_dimensions):
-    num_points = len(NB_POINTS)
-    bar_width = 0.2
-    total_width = num_points * bar_width
-    gap = 0.2
+    for npoints in NB_POINTS:
+        fig, ax = plt.subplots()
+        bar_width = 0.35
 
-    for i, npoints in enumerate(NB_POINTS):
-        matrix = [data["SMT_2.3.0"][matrix][npoints] for matrix in matrix_dimensions]
+        for i, program in enumerate([SMT_VERSION, EGOBOX_VERSION]):
+            matrix = [data[program][matrix][npoints] for matrix in matrix_dimensions]
 
-        plt.bar(
-            np.arange(len(matrix_dimensions)) * bar_width + total_width,
-            matrix,
-            width=bar_width,
-            label="SMT_2.3.0",
-        )
+            ax.bar(
+                np.arange(len(matrix_dimensions)) + i * bar_width,
+                matrix,
+                width=bar_width,
+                label=program,
+            )
 
-        plt.xlabel("Dimensions of x")
-        plt.ylabel("Average Time (seconds)")
-        plt.title(f"kriging - {npoints} points")
-        plt.xticks(
-            np.arange(len(matrix_dimensions)) * (total_width + gap)
-            + (total_width - bar_width) / 2,
-            matrix_dimensions,
-        )
-        plt.legend()
+        ax.set_xticks(np.arange(len(matrix_dimensions)) + bar_width / 2)
+        ax.set_xticklabels(matrix_dimensions)
+        ax.set_xlabel("Dimensions of x")
+        ax.set_ylabel("Average Time (seconds)")
+        ax.set_title(f"kriging - {npoints} points")
+        ax.legend()
 
         plt.savefig(f"results/kriging/results_krig_{npoints}_points.png")
-        plt.show()
 
 
 if __name__ == "__main__":
-    read_from_csv("kriging.csv")
+    read_from_csv(CSV_FILENAME)
     create_chart(sort_dimensions())

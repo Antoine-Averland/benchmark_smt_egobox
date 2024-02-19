@@ -6,10 +6,10 @@ import time
 from smt.sampling_methods import LHS
 import egobox as egx
 
-# DIMENSIONS = [5, 10, 20, 100, 200, 500]
-DIMENSIONS = [5, 10]
-NB_POINTS = [10, 13, 15]
-# NB_POINTS = [10, 50, 100, 250, 500, 1000]
+DIMENSIONS = [5, 10, 20, 100, 200, 500]
+# DIMENSIONS = [5, 10]
+# NB_POINTS = [10, 13, 15]
+NB_POINTS = [10, 50, 100, 250, 500, 1000]
 NB_ITER = 20
 SMT_VERSION = "SMT_2.3.0"
 EGOBOX_VERSION = "EGOBOX_0.15.1"
@@ -67,7 +67,7 @@ def run_benchmark(lhs_option):
             xlimits = np.full((dim, 2), [0, 1])
             for num_points in NB_POINTS:
                 print(
-                    f"Running benchmark with {lib} {args.lhs} for {xlimits.shape} and {num_points} points"
+                    f"Running benchmark with {lib} {lhs_option} for {xlimits.shape} and {num_points} points"
                 )
                 time = timeit.timeit(
                     lambda: ALGOS[lib](xlimits, num_points, lhs_option), number=NB_ITER

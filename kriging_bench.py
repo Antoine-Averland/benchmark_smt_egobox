@@ -1,4 +1,6 @@
 from smt.problems import Sphere
+from smt.surrogate_models import KRG
+import egobox as egx
 import numpy as np
 import timeit
 import time
@@ -10,46 +12,51 @@ DIMENSIONS = [5, 10]
 NB_POINTS = [10, 13, 15]
 # NB_POINTS = [10, 50, 100, 250, 500, 1000]
 NB_ITER = 5
-LIBRARIES = "SMT_2.3.0"
 CSV_filename = "kriging.csv"
-file = True
+SMT_VERSION = "SMT_2.3.0"
+EGOBOX_VERSION = "EGOBOX_0.15.1"
+LIBRARIES = [SMT_VERSION, EGOBOX_VERSION]
 
 
-def kriging_smt():
-    for ndim in DIMENSIONS:
-        problem = Sphere(ndim=ndim)
-        for num in NB_POINTS:
-            x = np.ones((num, ndim))
-            x[:, 0] = np.linspace(-10, 10.0, num)
-            x[:, 1] = 0.0
-            y = problem(x)
-
-            yd = np.empty((num, ndim))
-            for i in range(ndim):
-                yd[:, i] = problem(x, kx=i).flatten()
-
-            print(y.shape)
-            print(yd.shape)
+def problem_smt(ndim, num):
+    problem = Sphere(ndim=ndim)
+    x = np.ones((num, ndim))
+    x[:, 0] = np.linspace(-10, 10.0, num)
+    x[:, 1] = 0.0
+    y = problem(x)
+    print(y.shape)
+    return x, y
 
 
-ALGOS = {"SMT": kriging_smt}
+def kriging_smt(xt, yt):
+    sm = KRG(theta0=[1e-2])
+    sm.set_training_values(xt, yt)
+    sm.train()
+
+
+def kriging_egobox(xt, yt):
+    egx.GpMix().fit(xt, yt)
+
+
+ALGOS = {SMT_VERSION: kriging_smt, EGOBOX_VERSION: kriging_egobox}
 
 
 def run_benchmark():
     result = []
-    for dim in DIMENSIONS:
-        xlimits = np.full((dim, 2), [0, 1])
-        for num_points in NB_POINTS:
-            print(f"Running benchmark for {xlimits.shape} and {num_points} points")
-            time = timeit.timeit(lambda: kriging_smt(), number=NB_ITER)
-            res = {
-                "lib": LIBRARIES,
-                "dim": dim,
-                "nb_points": num_points,
-                "time": time / NB_ITER,
-            }
-            print(res)
-            result.append(res)
+    for lib in LIBRARIES:
+        for dim in DIMENSIONS:
+            for num_points in NB_POINTS:
+                print(f"Running benchmark with {lib} for {dim} and {num_points} points")
+                xt, yt = problem_smt(dim, num_points)
+                time = timeit.timeit(lambda: ALGOS[lib](xt, yt), number=NB_ITER)
+                res = {
+                    "lib": lib,
+                    "dim": dim,
+                    "nb_points": num_points,
+                    "time": time / NB_ITER,
+                }
+                print(res)
+                result.append(res)
     return result
 
 

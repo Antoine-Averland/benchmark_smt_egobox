@@ -3,15 +3,17 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-
-data = {"SMT_2.3.0": {}, "EGOBOX_0.15.1": {}}
+SMT_VERSION = "SMT_2.3.0"
+EGOBOX_VERSION = "EGOBOX_0.15.1"
+data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
 # NB_POINTS = [10, 50, 100, 250, 500, 1000]
 NB_POINTS = [10, 13, 15]
-file = False
+FILE = False
+LHS_OPTION_NAMES = ["optimized", "classic", "centered", "maximin", "centered_maximin"]
 
 
 def sort_dimensions():
-    matrix_dimensions = list(set(data["SMT_2.3.0"].keys()))
+    matrix_dimensions = list(set(data[SMT_VERSION].keys()))
     nb_matrix = [int(dim) for dim in matrix_dimensions]
     sort_matrix = sorted(nb_matrix)
     sort_matrix_str = [str(number) for number in sort_matrix]
@@ -19,12 +21,12 @@ def sort_dimensions():
     return sort_matrix_str
 
 
-def create_chart(matrix_dimensions, file, lhs):
+def create_chart(matrix_dimensions, lhs_option):
     for npoints in NB_POINTS:
         fig, ax = plt.subplots()
         bar_width = 0.35
 
-        for i, program in enumerate(["SMT_2.3.0", "EGOBOX_0.15.1"]):
+        for i, program in enumerate([SMT_VERSION, EGOBOX_VERSION]):
             matrix = [data[program][matrix][npoints] for matrix in matrix_dimensions]
 
             ax.bar(
@@ -38,13 +40,10 @@ def create_chart(matrix_dimensions, file, lhs):
         ax.set_xticklabels(matrix_dimensions)
         ax.set_xlabel("Dimensions of x")
         ax.set_ylabel("Average Time (seconds)")
-        if file:
-            ax.set_title(f"kriging - {npoints} points")
-        else:
-            ax.set_title(f"LHS {lhs} - {npoints} points")
+        ax.set_title(f"LHS {lhs_option} - {npoints} points")
         ax.legend()
 
-        plt.savefig(f"results/lhs_{lhs}/LHS_{lhs}_{npoints}_points.png")
+        plt.savefig(f"results/lhs_{lhs_option}/LHS_{lhs_option}_{npoints}_points.png")
 
 
 def read_from_csv(CSV_filename):
@@ -65,8 +64,15 @@ def read_from_csv(CSV_filename):
 
 if __name__ == "__main__":
     args = parse_arguments()
-    csv_filename = f"results_{args.lhs}.csv"
-    print(args.lhs)
+    if args.lhs == "all":
+        for lhs_type in LHS_OPTION_NAMES:
+            csv_filename = f"results_{lhs_type}.csv"
+            print(lhs_type)
+            read_from_csv(csv_filename)
+            create_chart(sort_dimensions(), lhs_type)
 
-    read_from_csv(csv_filename)
-    create_chart(sort_dimensions(), file, args.lhs)
+    else:
+        csv_filename = f"results_{args.lhs}.csv"
+        print(args.lhs)
+        read_from_csv(csv_filename)
+        create_chart(sort_dimensions(), args.lhs)

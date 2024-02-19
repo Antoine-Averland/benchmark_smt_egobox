@@ -6,45 +6,45 @@ import time
 from smt.sampling_methods import LHS
 import egobox as egx
 
-type_lhs = {
+# DIMENSIONS = [5, 10, 20, 100, 200, 500]
+DIMENSIONS = [5, 10]
+NB_POINTS = [10, 13, 15]
+# NB_POINTS = [10, 50, 100, 250, 500, 1000]
+NB_ITER = 20
+SMT_VERSION = "SMT_2.3.0"
+EGOBOX_VERSION = "EGOBOX_0.15.1"
+
+LHS_OPTION_NAMES = ["optimized", "classic", "centered", "maximin", "centered_maximin"]
+
+SMT_LHS_OPTIONS = {
     "classic": "c",
-    "opti": "ese",
+    "optimized": "ese",
     "centered": "center",
     "maximin": "maximin",
     "centered_maximin": "centermaximin",
 }
-type_ego = {
+EGOBOX_LHS_OPTIONS = {
     "classic": egx.Sampling.LHS_CLASSIC,
-    "opti": "",
+    "optimized": egx.Sampling.LHS,
     "centered": egx.Sampling.LHS_CENTERED,
     "maximin": egx.Sampling.LHS_MAXIMIN,
     "centered_maximin": egx.Sampling.LHS_CENTERED_MAXIMIN,
 }
 
 
-def smt_lhs(xlimits, num_points, args):
-    sampling = LHS(xlimits=xlimits, criterion=type_lhs[args.lhs])
+def smt_lhs(xlimits, num_points, lhs_opt):
+    sampling = LHS(xlimits=xlimits, criterion=SMT_LHS_OPTIONS[lhs_opt])
     sampling(num_points)
 
 
-def egobox_lhs(xlimits, num_points, args):
+def egobox_lhs(xlimits, num_points, lhs_opt):
     xspecs = egx.to_specs(xlimits)
-    if args.lhs == "opti":
-        egx.lhs(xspecs, num_points)
-    else:
-        egx.sampling(type_ego[args.lhs], xspecs, num_points)
-
-
-# DIMENSIONS = [5, 10, 20, 100, 200, 500]
-DIMENSIONS = [5, 10]
-NB_POINTS = [10, 13, 15]
-# NB_POINTS = [10, 50, 100, 250, 500, 1000]
-NB_ITER = 20
+    egx.sampling(EGOBOX_LHS_OPTIONS[lhs_opt], xspecs, num_points)
 
 
 start = time.time()
-ALGOS = {}
-LIBRARIES = ["SMT_2.3.0", "EGOBOX_0.15.1"]
+ALGOS = {SMT_VERSION: smt_lhs, EGOBOX_VERSION: egobox_lhs}
+LIBRARIES = [SMT_VERSION, EGOBOX_VERSION]
 
 
 def parse_arguments():
@@ -53,14 +53,14 @@ def parse_arguments():
     )
     parser.add_argument(
         "--lhs",
-        choices=["opti", "classic", "centered", "maximin", "centered_maximin", "all"],
+        choices=LHS_OPTION_NAMES + ["all"],
         default="all",
         help="Specify the choice of the type of lhs",
     )
     return parser.parse_args()
 
 
-def run_benchmark(LIBRARIES, ALGOS):
+def run_benchmark(lhs_option):
     result = []
     for lib in LIBRARIES:
         for dim in DIMENSIONS:
@@ -70,7 +70,7 @@ def run_benchmark(LIBRARIES, ALGOS):
                     f"Running benchmark with {lib} {args.lhs} for {xlimits.shape} and {num_points} points"
                 )
                 time = timeit.timeit(
-                    lambda: ALGOS[lib](xlimits, num_points, args), number=NB_ITER
+                    lambda: ALGOS[lib](xlimits, num_points, lhs_option), number=NB_ITER
                 )
                 res = {
                     "lib": lib,
@@ -96,14 +96,12 @@ def write_to_csv(csv_filename, result):
 if __name__ == "__main__":
     args = parse_arguments()
     if args.lhs == "all":
-        for lhs_type in type_lhs.keys():
+        for lhs_type in LHS_OPTION_NAMES:
             csv_filename = f"results_{lhs_type}.csv"
-            ALGOS = {"SMT_2.3.0": smt_lhs, "EGOBOX_0.15.1": egobox_lhs}
-            write_to_csv(csv_filename, run_benchmark(LIBRARIES, ALGOS))
+            write_to_csv(csv_filename, run_benchmark(lhs_type))
 
     else:
         csv_filename = f"results_{args.lhs}.csv"
-        ALGOS = {"SMT_2.3.0": smt_lhs, "EGOBOX_0.15.1": egobox_lhs}
-        write_to_csv(csv_filename, run_benchmark(LIBRARIES, ALGOS))
+        write_to_csv(csv_filename, run_benchmark(args.lhs))
 
     print(f"{time.time() - start} seconds")

@@ -7,7 +7,6 @@ SMT_VERSION = "SMT_2.3.0"
 EGOBOX_VERSION = "EGOBOX_0.15.1"
 data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
 NB_POINTS = [10, 50, 100, 250, 500, 1000]
-# NB_POINTS = [10, 13, 15]
 LHS_OPTION_NAMES = ["optimized", "classic", "centered", "maximin", "centered_maximin"]
 
 
@@ -20,30 +19,36 @@ def sort_dimensions():
     return sort_matrix_str
 
 
-def create_chart(matrix_dimensions, lhs_option):
+def create_chart(matrix_dimensions, lhs_option, figure_number):
     for npoints in NB_POINTS:
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(2, 3, figsize=(15, 10))  # 2 rows, 3 columns for 6 graphs
+
         bar_width = 0.35
 
         for i, program in enumerate([SMT_VERSION, EGOBOX_VERSION]):
             matrix = [data[program][matrix][npoints] for matrix in matrix_dimensions]
 
-            ax.bar(
+            row_index = i // 3
+            col_index = i % 3
+
+            ax[row_index, col_index].bar(
                 np.arange(len(matrix_dimensions)) + i * bar_width,
                 matrix,
                 width=bar_width,
                 label=program,
             )
 
-        ax.set_xticks(np.arange(len(matrix_dimensions)) + bar_width / 2)
-        ax.set_xticklabels(matrix_dimensions)
-        ax.set_xlabel("Dimensions of x")
-        ax.set_ylabel("Average Time (seconds)")
-        ax.set_title(f"LHS {lhs_option} - {npoints} points")
-        ax.legend()
+            ax[row_index, col_index].set_xticks(
+                np.arange(len(matrix_dimensions)) + bar_width / 2
+            )
+            ax[row_index, col_index].set_xticklabels(matrix_dimensions)
+            ax[row_index, col_index].set_xlabel("Dimensions of x")
+            ax[row_index, col_index].set_ylabel("Average Time (seconds)")
+            ax[row_index, col_index].set_title(f"LHS {lhs_option} - {npoints} points")
+            ax[row_index, col_index].legend()
 
         plt.savefig(
-            f"results/lhs_{lhs_option}/LHS_{lhs_option}_{npoints}_points_{SMT_VERSION}_{EGOBOX_VERSION}.png"
+            f"results/lhs_{lhs_option}/LHS_{lhs_option}_{npoints}_points_{SMT_VERSION}_{EGOBOX_VERSION}_{figure_number}.png"
         )
 
 
@@ -66,14 +71,14 @@ def read_from_csv(CSV_filename):
 if __name__ == "__main__":
     args = parse_arguments()
     if args.lhs == "all":
-        for lhs_type in LHS_OPTION_NAMES:
+        for i, lhs_type in enumerate(LHS_OPTION_NAMES):
             csv_filename = f"results_{lhs_type}.csv"
             print(lhs_type)
             read_from_csv(csv_filename)
-            create_chart(sort_dimensions(), lhs_type)
+            create_chart(sort_dimensions(), lhs_type, i + 1)
 
     else:
         csv_filename = f"results_{args.lhs}.csv"
         print(args.lhs)
         read_from_csv(csv_filename)
-        create_chart(sort_dimensions(), args.lhs)
+        create_chart(sort_dimensions(), args.lhs, 1)

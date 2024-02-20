@@ -6,8 +6,7 @@ SMT_VERSION = "SMT_2.3.0"
 EGOBOX_VERSION = "EGOBOX_0.15.1"
 data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
 CSV_FILENAME = "kriging.csv"
-# NB_POINTS = [10, 50, 100, 250, 500, 1000]
-NB_POINTS = [10, 13, 15]
+NB_POINTS = [50, 200, 400, 600, 1000]
 
 
 def sort_dimensions():

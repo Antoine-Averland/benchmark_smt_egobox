@@ -11,7 +11,7 @@ DIMENSIONS = [5, 10, 20, 50, 100]
 # DIMENSIONS = [5, 10]
 # NB_POINTS = [10, 13, 15]
 NB_POINTS = [50, 200, 400, 600, 1000]
-NB_ITER = 20
+NB_ITER = 2
 CSV_FILENAME = "kriging.csv"
 SMT_VERSION = "SMT_2.3.0"
 EGOBOX_VERSION = "EGOBOX_0.15.1"
@@ -29,7 +29,7 @@ def problem_smt(ndim, num):
 
 
 def kriging_smt(xt, yt):
-    sm = KRG(theta0=[1e-2])
+    sm = KRG(theta0=[1e-2], nugget=1e-5)
     sm.set_training_values(xt, yt)
     sm.train()
 
@@ -44,19 +44,19 @@ ALGOS = {SMT_VERSION: kriging_smt, EGOBOX_VERSION: kriging_egobox}
 def run_benchmark():
     result = []
     for lib in LIBRARIES:
-        for dim in DIMENSIONS:
-            for num_points in NB_POINTS:
-                print(f"Running benchmark with {lib} for {dim} and {num_points} points")
-                xt, yt = problem_smt(dim, num_points)
-                time = timeit.timeit(lambda: ALGOS[lib](xt, yt), number=NB_ITER)
-                res = {
-                    "lib": lib,
-                    "dim": dim,
-                    "nb_points": num_points,
-                    "time": time / NB_ITER,
-                }
-                print(res)
-                result.append(res)
+        for dim, num_points in zip(DIMENSIONS, NB_POINTS):
+            print(f"Running benchmark with {lib} for {dim} and {num_points} points")
+            xt, yt = problem_smt(dim, num_points)
+            print(xt, yt)
+            time = timeit.timeit(lambda: ALGOS[lib](xt, yt), number=NB_ITER)
+            res = {
+                "lib": lib,
+                "dim": dim,
+                "nb_points": num_points,
+                "time": time / NB_ITER,
+            }
+            print(res)
+            result.append(res)
     return result
 
 

@@ -18,8 +18,8 @@ def sort_dimensions():
     return sort_matrix_str
 
 
-def read_from_csv(CSV_filename):
-    with open(CSV_filename, mode="r") as file:
+def read_from_csv(csv_filename):
+    with open(csv_filename, mode="r") as file:
         reader = csv.DictReader(file)
         for row in reader:
             program = row["lib"]
@@ -40,11 +40,11 @@ def create_chart(matrix_dimensions):
         bar_width = 0.35
 
         for i, program in enumerate([SMT_VERSION, EGOBOX_VERSION]):
-            matrix = [data[program][matrix][npoints] for matrix in matrix_dimensions]
+            matrix_values = [data[program][dim][npoints] for dim in matrix_dimensions]
 
             ax.bar(
                 np.arange(len(matrix_dimensions)) + i * bar_width,
-                matrix,
+                matrix_values,
                 width=bar_width,
                 label=program,
             )

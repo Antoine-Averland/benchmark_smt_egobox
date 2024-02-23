@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 SMT_VERSION = "SMT_2.3.0"
-EGOBOX_VERSION = "EGOBOX_0.15.1"
+EGOBOX_VERSION = "EGOBOX_0.15.3"
 # data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
 NB_POINTS = [10, 50, 100, 250, 500, 1000]
 LHS_OPTION_NAMES = ["optimized", "classic", "centered", "maximin", "centered_maximin"]
@@ -22,6 +22,7 @@ def create_chart(lhs_option, dimensions, data):
     fig.suptitle(f"LHS {lhs_option}")
 
     for i, npoints in enumerate(NB_POINTS):
+        print(i)
         row, col = divmod(i, 3)
 
         for j, program in enumerate([SMT_VERSION, EGOBOX_VERSION]):
@@ -36,13 +37,15 @@ def create_chart(lhs_option, dimensions, data):
 
         axs[row, col].set_xticks(np.arange(len(dimensions)))
         axs[row, col].set_xticklabels(dimensions)
-        axs[row, col].set_xlabel("Dimensions of x")
-        axs[row, col].set_ylabel("time")
+        axs[row, col].set_xlabel("Dimension of x")
+        axs[row, col].set_ylabel("Time(s)")
         axs[row, col].set_title(f"{npoints} points")
         axs[row, col].legend()
 
     plt.tight_layout(rect=[0, 0, 1, 0.95])
-    plt.savefig(f"results/lhs_{lhs_option}/LHS_{lhs_option}_benchmarks.png")
+    plt.savefig(
+        f"results/lhs_{lhs_option}/LHS_{lhs_option}_benchmarks_new_egobox_version.png"
+    )
     plt.close()
 
 

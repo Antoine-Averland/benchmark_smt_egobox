@@ -1,7 +1,6 @@
 from smt.problems import Sphere
 from smt.surrogate_models import KRG
 import egobox as egx
-import numpy as np
 import timeit
 import time
 import csv
@@ -11,21 +10,11 @@ DIMENSIONS = [5, 10, 20, 50, 100]
 # DIMENSIONS = [5, 10]
 # NB_POINTS = [10, 13, 15]
 NB_POINTS = [50, 200, 400, 600, 1000]
-NB_ITER = 2
+NB_ITER = 5
 CSV_FILENAME = "kriging.csv"
 SMT_VERSION = "SMT_2.3.0"
 EGOBOX_VERSION = "EGOBOX_0.15.1"
 LIBRARIES = [SMT_VERSION, EGOBOX_VERSION]
-
-
-def problem_smt(ndim, num):
-    problem = Sphere(ndim=ndim)
-    x = np.ones((num, ndim))
-    x[:, 0] = np.linspace(-10, 10.0, num)
-    x[:, 1] = 0.0
-    y = problem(x)
-    print(y.shape)
-    return x, y
 
 
 def kriging_smt(xt, yt):
@@ -46,7 +35,10 @@ def run_benchmark():
     for lib in LIBRARIES:
         for dim, num_points in zip(DIMENSIONS, NB_POINTS):
             print(f"Running benchmark with {lib} for {dim} and {num_points} points")
-            xt, yt = problem_smt(dim, num_points)
+            problem = Sphere(ndim=dim)
+            xtypes = egx.to_specs(problem.xlimits)
+            xt = egx.lhs(xtypes, num_points)
+            yt = problem(xt)
             print(xt, yt)
             time = timeit.timeit(lambda: ALGOS[lib](xt, yt), number=NB_ITER)
             res = {

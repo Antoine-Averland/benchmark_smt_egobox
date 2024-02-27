@@ -1,19 +1,36 @@
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+import argparse
 
 SMT_VERSION = "SMT_2.3.0"
 EGOBOX_VERSION = "EGOBOX_0.15.1"
 # data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
 CSV_FILENAME = "kriging.csv"
-NB_POINTS1 = [50, 200, 400, 600, 1000]
-NB_POINTS2 = []
+NB_POINTS1 = [50, 200, 400]
+NB_POINTS2 = [600, 1000]
 
 
-def sort_dimensions(data):
+def parse_arguments():
+    parser = argparse.ArgumentParser(
+        description="Run benchmark for different functions."
+    )
+    parser.add_argument(
+        "--dimensions",
+        choices=["low", "high"],
+        default="low",
+        help="Specify the choice of the type of lhs",
+    )
+    return parser.parse_args()
+
+
+def sort_dimensions(data, args):
     matrix_dimensions = list(set(data[SMT_VERSION].keys()))
     nb_matrix = [int(dim) for dim in matrix_dimensions]
-    sort_matrix = sorted(nb_matrix)
+    if args == "low":
+        sort_matrix = sorted(nb_matrix)[:-2]
+    elif args == "high":
+        sort_matrix = sorted(nb_matrix)[-2:]
     sort_matrix_str = [str(number) for number in sort_matrix]
     print(sort_matrix_str)
     return sort_matrix_str
@@ -37,18 +54,18 @@ def read_from_csv(csv_filename):
     return data
 
 
-def create_chart(matrix_dimensions, data):
+def create_chart(matrix_dimensions, data, nb_points, args):
     bar_width = 0.35
     index = np.arange(len(matrix_dimensions))
     print(index)
 
     smt_times = [
         data[SMT_VERSION][dim][num_points]
-        for num_points, dim in zip(NB_POINTS1, matrix_dimensions)
+        for num_points, dim in zip(nb_points, matrix_dimensions)
     ]
     egobox_times = [
         data[EGOBOX_VERSION][dim][num_points]
-        for num_points, dim in zip(NB_POINTS1, matrix_dimensions)
+        for num_points, dim in zip(nb_points, matrix_dimensions)
     ]
     print(smt_times)
     print(egobox_times)
@@ -63,13 +80,19 @@ def create_chart(matrix_dimensions, data):
 
     plt.xlabel("Dimensions")
     plt.ylabel("Temps (s)")
-    plt.title("kriging benchmark")
+    plt.title(f"kriging {args} dimensions benchmark")
     plt.xticks(index - bar_width, matrix_dimensions)
     plt.legend()
-    plt.savefig("results/kriging/kriging.png")
+    plt.savefig(f"results/kriging/kriging_{args}_dimensions.png")
 
 
 if __name__ == "__main__":
+    args = parse_arguments()
     data = read_from_csv(CSV_FILENAME)
-    dimensions = sort_dimensions(data)
-    create_chart(dimensions, data)
+    dimensions = sort_dimensions(data, args.dimensions)
+    print(dimensions)
+    if args.dimensions == "low":
+        create_chart(dimensions, data, NB_POINTS1, args.dimensions)
+
+    if args.dimensions == "high":
+        create_chart(dimensions, data, NB_POINTS2, args.dimensions)

@@ -10,9 +10,9 @@ DIMENSIONS = [5, 10, 20, 100, 200, 500]
 # DIMENSIONS = [5, 10]
 # NB_POINTS = [10, 13, 15]
 NB_POINTS = [10, 50, 100, 250, 500, 1000]
-NB_ITER = 20
+NB_ITER = 5
 SMT_VERSION = "SMT_2.3.0"
-EGOBOX_VERSION = "EGOBOX_0.15.1"
+EGOBOX_VERSION = "EGOBOX_0.15.3"
 
 LHS_OPTION_NAMES = ["optimized", "classic", "centered", "maximin", "centered_maximin"]
 
@@ -97,11 +97,11 @@ if __name__ == "__main__":
     args = parse_arguments()
     if args.lhs == "all":
         for lhs_type in LHS_OPTION_NAMES:
-            csv_filename = f"results_{lhs_type}.csv"
+            csv_filename = f"results_{lhs_type}_{SMT_VERSION}_{EGOBOX_VERSION}.csv"
             write_to_csv(csv_filename, run_benchmark(lhs_type))
 
     else:
-        csv_filename = f"results_{args.lhs}.csv"
+        csv_filename = f"results_{args.lhs}_{SMT_VERSION}_{EGOBOX_VERSION}.csv"
         write_to_csv(csv_filename, run_benchmark(args.lhs))
 
     print(f"{time.time() - start} seconds")

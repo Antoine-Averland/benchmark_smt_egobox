@@ -19,7 +19,7 @@ def sort_dimensions(data):
 
 def create_chart(lhs_option, dimensions, data):
     fig, axs = plt.subplots(2, 3, figsize=(15, 8))
-    fig.suptitle(f"LHS {lhs_option}")
+    fig.suptitle(f"LHS {lhs_option} {SMT_VERSION} / {EGOBOX_VERSION}")
 
     for i, npoints in enumerate(NB_POINTS):
         print(i)
@@ -44,7 +44,7 @@ def create_chart(lhs_option, dimensions, data):
 
     plt.tight_layout(rect=[0, 0, 1, 0.95])
     plt.savefig(
-        f"results/lhs_{lhs_option}/LHS_{lhs_option}_benchmarks_new_egobox_version.png"
+        f"results/lhs_{lhs_option}/LHS_{lhs_option}_benchmarks_{SMT_VERSION}_{EGOBOX_VERSION}.png"
     )
     plt.close()
 
@@ -69,7 +69,7 @@ def read_from_csv(csv_filename):
 
 if __name__ == "__main__":
     for lhs_type in LHS_OPTION_NAMES:
-        csv_filename = f"results_{lhs_type}.csv"
+        csv_filename = f"results_{lhs_type}_{SMT_VERSION}_{EGOBOX_VERSION}.csv"
         print(lhs_type)
         data = read_from_csv(csv_filename)
         dimensions = sort_dimensions(data)

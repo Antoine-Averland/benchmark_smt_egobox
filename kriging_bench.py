@@ -37,7 +37,7 @@ def run_benchmark():
             print(f"Running benchmark with {lib} for {dim} and {num_points} points")
             problem = Sphere(ndim=dim)
             xtypes = egx.to_specs(problem.xlimits)
-            xt = egx.lhs(xtypes, num_points)
+            xt = egx.lhs(xtypes, num_points, seed=42)
             yt = problem(xt)
             print(xt, yt)
             time = timeit.timeit(lambda: ALGOS[lib](xt, yt), number=NB_ITER)

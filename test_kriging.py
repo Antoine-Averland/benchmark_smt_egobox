@@ -8,8 +8,8 @@ from smt.surrogate_models import GPX
 
 class TestKriging(unittest.TestCase):
     def test_kriging(self):
-        ndim = 2
-        num = 50
+        ndim = 10
+        num = 200
         problem = Sphere(ndim=ndim)
         xlimits = problem.xlimits
         sampling = LHS(xlimits=xlimits, criterion="ese", random_state=42)
@@ -17,7 +17,7 @@ class TestKriging(unittest.TestCase):
         xt = sampling(num)
         yt = problem(xt)
 
-        sm1 = KRG(theta0=[1e-2], nugget=1e-5)
+        sm1 = KRG()
         sm1.set_training_values(xt, yt)
         sm1.train()
 
@@ -32,7 +32,7 @@ class TestKriging(unittest.TestCase):
         e_error1 = np.linalg.norm(ytest1 - ye) / np.linalg.norm(ye)
         print(e_error1)
 
-        ytest2 = sm1.predict_values(xe)
+        ytest2 = sm2.predict_values(xe)
         e_error2 = np.linalg.norm(ytest2 - ye) / np.linalg.norm(ye)
         print(e_error2)
 

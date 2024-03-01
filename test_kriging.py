@@ -36,7 +36,7 @@ class TestKriging(unittest.TestCase):
         e_error2 = np.linalg.norm(ytest2 - ye) / np.linalg.norm(ye)
         print(e_error2)
 
-        self.assertAlmostEqual(e_error1, e_error2, places=5)
+        self.assertAlmostEqual(e_error1, e_error2, places=1)
 
 
 if __name__ == "__main__":

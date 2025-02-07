@@ -11,8 +11,8 @@ DIMENSIONS = [5, 10, 20, 100, 200, 500]
 # NB_POINTS = [10, 13, 15]
 NB_POINTS = [10, 50, 100, 250, 500, 1000]
 NB_ITER = 5
-SMT_VERSION = "SMT_2.3.0"
-EGOBOX_VERSION = "EGOBOX_0.15.3"
+SMT_VERSION = "SMT_2.9.0"
+EGOBOX_VERSION = "EGOBOX_0.25.1"
 
 LHS_OPTION_NAMES = ["optimized", "classic", "centered", "maximin", "centered_maximin"]
 

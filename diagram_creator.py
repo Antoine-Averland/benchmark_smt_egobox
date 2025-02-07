@@ -2,8 +2,8 @@ import csv
 import matplotlib.pyplot as plt
 import numpy as np
 
-SMT_VERSION = "SMT_2.3.0"
-EGOBOX_VERSION = "EGOBOX_0.15.3"
+SMT_VERSION = "SMT_2.9.0"
+EGOBOX_VERSION = "EGOBOX_0.25.1"
 # data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
 NB_POINTS = [10, 50, 100, 250, 500, 1000]
 LHS_OPTION_NAMES = ["optimized", "classic", "centered", "maximin", "centered_maximin"]
@@ -49,6 +49,38 @@ def create_chart(lhs_option, dimensions, data):
     plt.close()
 
 
+def create_line_chart(lhs_option, dimensions, data):
+    fig, axs = plt.subplots(2, 3, figsize=(15, 8))
+    fig.suptitle(f"LHS {lhs_option} {SMT_VERSION} / {EGOBOX_VERSION}")
+
+    for i, npoints in enumerate(NB_POINTS):
+        row, col = divmod(i, 3)
+
+        for program, color, marker in zip(
+            [SMT_VERSION, EGOBOX_VERSION], ["b", "r"], ["o", "s"]
+        ):
+            matrix_values = [data[program][matrix][npoints] for matrix in dimensions]
+            axs[row, col].plot(
+                dimensions,
+                matrix_values,
+                marker=marker,
+                linestyle="-",
+                color=color,
+                label=program,
+            )
+
+        axs[row, col].set_xlabel("Dimension of x")
+        axs[row, col].set_ylabel("Time (s)")
+        axs[row, col].set_title(f"{npoints} points")
+        axs[row, col].legend()
+
+    plt.tight_layout(rect=[0, 0, 1, 0.95])
+    plt.savefig(
+        f"results/lhs_{lhs_option}/LHS_{lhs_option}_benchmarks_lines_{SMT_VERSION}_{EGOBOX_VERSION}.png"
+    )
+    plt.close()
+
+
 def read_from_csv(csv_filename):
     data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
     with open(csv_filename, mode="r") as file:
@@ -74,3 +106,4 @@ if __name__ == "__main__":
         data = read_from_csv(csv_filename)
         dimensions = sort_dimensions(data)
         create_chart(lhs_type, dimensions, data)
+        create_line_chart(lhs_type, dimensions, data)

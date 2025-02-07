@@ -86,6 +86,80 @@ def create_chart(matrix_dimensions, data, nb_points, args):
     plt.savefig(f"results/kriging/kriging_{args}_dimensions.png")
 
 
+# def create_line_chart_kriging(matrix_dimensions, data, nb_points, args):
+#     plt.figure(figsize=(10, 6))
+
+#     smt_times = [
+#         data[SMT_VERSION][dim][num_points]
+#         for num_points, dim in zip(nb_points, matrix_dimensions)
+#     ]
+#     egobox_times = [
+#         data[EGOBOX_VERSION][dim][num_points]
+#         for num_points, dim in zip(nb_points, matrix_dimensions)
+#     ]
+
+#     plt.plot(
+#         matrix_dimensions,
+#         smt_times,
+#         marker="o",
+#         linestyle="-",
+#         color="b",
+#         label=SMT_VERSION,
+#     )
+#     plt.plot(
+#         matrix_dimensions,
+#         egobox_times,
+#         marker="s",
+#         linestyle="-",
+#         color="r",
+#         label=EGOBOX_VERSION,
+#     )
+
+#     plt.xlabel("Dimensions")
+#     plt.ylabel("Temps (s)")
+#     plt.title(f"Kriging {args} dimensions benchmark")
+#     plt.legend()
+#     plt.savefig(f"results/kriging/kriging_{args}_dimensions_lines.png")
+#     plt.close()
+
+
+def create_line_chart_kriging(matrix_dimensions, data, nb_points):
+    plt.figure(figsize=(10, 6))
+
+    smt_times = [
+        data[SMT_VERSION][dim][num_points]
+        for num_points, dim in zip(nb_points, matrix_dimensions)
+    ]
+    egobox_times = [
+        data[EGOBOX_VERSION][dim][num_points]
+        for num_points, dim in zip(nb_points, matrix_dimensions)
+    ]
+
+    plt.plot(
+        matrix_dimensions,
+        smt_times,
+        marker="o",
+        linestyle="-",
+        color="b",
+        label=SMT_VERSION,
+    )
+    plt.plot(
+        matrix_dimensions,
+        egobox_times,
+        marker="s",
+        linestyle="-",
+        color="r",
+        label=EGOBOX_VERSION,
+    )
+
+    plt.xlabel("Dimensions")
+    plt.ylabel("Temps (s)")
+    plt.title("Kriging benchmark (low & high dimensions)")
+    plt.legend()
+    plt.savefig("results/kriging/kriging_all_dimensions.png")
+    plt.close()
+
+
 if __name__ == "__main__":
     args = parse_arguments()
     data = read_from_csv(CSV_FILENAME)
@@ -96,3 +170,10 @@ if __name__ == "__main__":
 
     if args.dimensions == "high":
         create_chart(dimensions, data, NB_POINTS2, args.dimensions)
+
+    dimensions_low = sort_dimensions(data, "low")
+    dimensions_high = sort_dimensions(data, "high")
+    all_dimensions = dimensions_low + dimensions_high
+    all_nb_points = NB_POINTS1 + NB_POINTS2
+
+    create_line_chart_kriging(all_dimensions, data, all_nb_points)

@@ -10,8 +10,8 @@ DIMENSIONS = [5, 10, 20, 50, 100]
 # DIMENSIONS = [5, 10]
 # NB_POINTS = [10, 13, 15]
 NB_POINTS = [50, 200, 400, 600, 1000]
-NB_ITER = 5
-CSV_FILENAME = "kriging.csv"
+NB_ITER = 2
+CSV_FILENAME = "results/kriging/kriging.csv"
 SMT_VERSION = "SMT_2.9.0"
 EGOBOX_VERSION = "EGOBOX_0.25.1"
 LIBRARIES = [SMT_VERSION, EGOBOX_VERSION]
@@ -39,7 +39,7 @@ def run_benchmark():
             xtypes = egx.to_specs(problem.xlimits)
             xt = egx.lhs(xtypes, num_points, seed=42)
             yt = problem(xt)
-            print(xt, yt)
+            # print(xt, yt)
             time = timeit.timeit(lambda: ALGOS[lib](xt, yt), number=NB_ITER)
             res = {
                 "lib": lib,
@@ -47,7 +47,7 @@ def run_benchmark():
                 "nb_points": num_points,
                 "time": time / NB_ITER,
             }
-            print(res)
+            # print(res)
             result.append(res)
     return result
 

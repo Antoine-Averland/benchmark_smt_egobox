@@ -3,10 +3,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 
-SMT_VERSION = "SMT_2.3.0"
-EGOBOX_VERSION = "EGOBOX_0.15.1"
+SMT_VERSION = "SMT_2.9.0"
+EGOBOX_VERSION = "EGOBOX_0.25.1"
 # data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
-CSV_FILENAME = "kriging.csv"
+CSV_FILENAME = "results/kriging/kriging.csv"
 NB_POINTS1 = [50, 200, 400]
 NB_POINTS2 = [600, 1000]
 

@@ -6,15 +6,16 @@ import time
 import csv
 
 start = time.time()
-DIMENSIONS = [5, 10, 20, 50, 100]
-# DIMENSIONS = [5, 10]
-# NB_POINTS = [10, 13, 15]
-NB_POINTS = [50, 200, 400, 600, 1000]
+# DIMENSIONS = [5, 10, 20, 50, 100]
+DIMENSIONS = [5, 10, 15]
+NB_POINTS = [10, 13, 15]
+# NB_POINTS = [50, 200, 400, 600, 1000]
 NB_ITER = 2
-CSV_FILENAME = "results/kriging/kriging.csv"
-SMT_VERSION = "SMT_2.9.0"
+SMT_VERSION = "SMT_2.4.0"
 EGOBOX_VERSION = "EGOBOX_0.25.1"
 LIBRARIES = [SMT_VERSION, EGOBOX_VERSION]
+CSV_FILENAME = f"results/kriging/kriging_{SMT_VERSION}_{EGOBOX_VERSION}.csv"
+
 
 
 def kriging_smt(xt, yt):

@@ -3,12 +3,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import argparse
 
-SMT_VERSION = "SMT_2.9.0"
+SMT_VERSION = "SMT_2.4.0"
 EGOBOX_VERSION = "EGOBOX_0.25.1"
 # data = {SMT_VERSION: {}, EGOBOX_VERSION: {}}
-CSV_FILENAME = "results/kriging/kriging.csv"
-NB_POINTS1 = [50, 200, 400]
+CSV_FILENAME = f"results/kriging/kriging_{SMT_VERSION}_{EGOBOX_VERSION}.csv"
+# NB_POINTS1 = [50, 200, 400]
 NB_POINTS2 = [600, 1000]
+
+NB_POINTS1 = [10, 13]
+NB_POINTS2 = [15]
+
 
 
 def parse_arguments():
@@ -83,7 +87,7 @@ def create_chart(matrix_dimensions, data, nb_points, args):
     plt.title(f"kriging {args} dimensions benchmark")
     plt.xticks(index - bar_width, matrix_dimensions)
     plt.legend()
-    plt.savefig(f"results/kriging/kriging_{args}_dimensions.png")
+    plt.savefig(f"results/kriging/kriging_{args}_dimensions_{SMT_VERSION}_{EGOBOX_VERSION}.png")
 
 
 # def create_line_chart_kriging(matrix_dimensions, data, nb_points, args):
@@ -156,7 +160,7 @@ def create_line_chart_kriging(matrix_dimensions, data, nb_points):
     plt.ylabel("Temps (s)")
     plt.title("Kriging benchmark (low & high dimensions)")
     plt.legend()
-    plt.savefig("results/kriging/kriging_all_dimensions.png")
+    plt.savefig(f"results/kriging/kriging_all_dimensions_{SMT_VERSION}_{EGOBOX_VERSION}.png")
     plt.close()
 
 
